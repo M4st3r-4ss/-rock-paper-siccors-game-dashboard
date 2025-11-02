@@ -1,8 +1,8 @@
 # rock paper siccors game dashboard
 ###### display the remainding number of card by HTML and firebase
 ## Setup
-1. 1. Go to https://console.firebase.google.com and create a new project.
-2. 1. In the project, enable the Realtime Database (under Build > Realtime Database).
+1. Go to https://console.firebase.google.com and create a new project.
+2. In the project, enable the Realtime Database (under Build > Realtime Database).
 3. For security, set database rules to allow read/write (e.g., `{ "rules": { ".read": true, ".write": true } }` for testing; restrict later for production).
 4. Get your Firebase config from Project Settings > General (under "Your apps" > Web app). It looks like:
 ```javascript
@@ -23,4 +23,5 @@
 #### try it out on [rocks.m4s73r.org](http://rocks.m4s73r.org "rocks.m4s73r.org")
 
 ## screenshot
+
 ![](https://github.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/blob/main/screenshot.png?raw=true)
