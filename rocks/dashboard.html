@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .icon {
+            background-color: white;
+            border-radius: 10px;
+            padding: 10px;
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid black;
+        }
+        .icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .text {
+            margin-right: 10px;
+            width: 60px;
+        }
+        .bar-container {
+            width: 300px;
+            height: 20px;
+            border: 1px solid white;
+            background-color: black;
+            position: relative;
+        }
+        .bar {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="row" id="row1">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/paper.png" alt="paper"></div>
+        <div class="text" id="text1">15/50</div>
+        <div class="bar-container">
+            <div class="bar" id="bar1" style="width: 30%; background-color: red;"></div>
+        </div>
+    </div>
+    <div class="row" id="row2">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/scissors.png" alt="scissors"></div>
+        <div class="text" id="text2">30/50</div>
+        <div class="bar-container">
+            <div class="bar" id="bar2" style="width: 60%; background-color: yellow;"></div>
+        </div>
+    </div>
+    <div class="row" id="row3">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/rock.png" alt="rock"></div>
+        <div class="text" id="text3">40/50</div>
+        <div class="bar-container">
+            <div class="bar" id="bar3" style="width: 80%; background-color: blue;"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+        const firebaseConfig = {
+
+  apiKey: "AIzaSyBYKmd778iJDb1zei7BO3UzSif-6If_8PY",
+
+  authDomain: "public-4ad5c.firebaseapp.com",
+
+  projectId: "public-4ad5c",
+
+  storageBucket: "public-4ad5c.firebasestorage.app",
+
+  messagingSenderId: "1048350758255",
+
+  appId: "1:1048350758255:web:93a550c9a770b82486049a",
+
+  measurementId: "G-YPM6XCVKWD"
+
+};
+
+
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const paths = {
+            1: 'items/open-hand',
+            2: 'items/peace',
+            3: 'items/fist'
+        };
+
+        // Listen for real-time changes for each item
+        Object.keys(paths).forEach(id => {
+            const itemRef = ref(db, paths[id]);
+            onValue(itemRef, (snapshot) => {
+                const data = snapshot.val() || { current: 0, total: 50 };
+                let current = data.current || 0;
+                let total = data.total || 50;
+                if (current > total) current = total;
+                if (current < 0) current = 0;
+                if (total < 1) total = 1;
+
+                document.getElementById(`text${id}`).innerText = `${current}/${total}`;
+                document.getElementById(`bar${id}`).style.width = `${(current / total) * 100}%`;
+            });
+
+            // Initial set if no data
+            onValue(itemRef, (snapshot) => {
+                if (!snapshot.exists()) {
+                    const initials = {1: {current:15, total:50}, 2: {current:30, total:50}, 3: {current:40, total:50}};
+                    set(itemRef, initials[id]);
+                }
+            }, { onlyOnce: true });
+        });
+    </script>
+</body>
+</html>

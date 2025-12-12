@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Editors</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+        }
+        .editor {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .icon {
+            background-color: white;
+            border-radius: 10px;
+            padding: 10px;
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid black; /* subtle border to match hand-drawn style */
+        }
+        .icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .button {
+            background-color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: black;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .number {
+            color: white;
+            font-size: 18px;
+            min-width: 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="editor">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/paper.png" alt="paper"></div>
+        <div class="button" id="dec1" onclick="decrement(1)">−</div>
+        <div class="number" id="num1">15</div>
+        <div class="button" id="inc1" onclick="increment(1)">+</div>
+    </div>
+    <div class="editor">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/scissors.png" alt="scissors"></div>
+        <div class="button" id="dec2" onclick="decrement(2)">−</div>
+        <div class="number" id="num2">30</div>
+        <div class="button" id="inc2" onclick="increment(2)">+</div>
+    </div>
+    <div class="editor">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/rock.png" alt="rock"></div>
+        <div class="button" id="dec3" onclick="decrement(3)">−</div>
+        <div class="number" id="num3">40</div>
+        <div class="button" id="inc3" onclick="increment(3)">+</div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+        const firebaseConfig = {
+
+  apiKey: "AIzaSyBYKmd778iJDb1zei7BO3UzSif-6If_8PY",
+
+  authDomain: "public-4ad5c.firebaseapp.com",
+
+  projectId: "public-4ad5c",
+
+  storageBucket: "public-4ad5c.firebasestorage.app",
+
+  messagingSenderId: "1048350758255",
+
+  appId: "1:1048350758255:web:93a550c9a770b82486049a",
+
+  measurementId: "G-YPM6XCVKWD"
+
+};
+
+
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const paths = {
+            1: 'items/open-hand',
+            2: 'items/peace',
+            3: 'items/fist'
+        };
+
+        // Listen for real-time changes for each item
+        Object.keys(paths).forEach(id => {
+            const itemRef = ref(db, paths[id]);
+            onValue(itemRef, (snapshot) => {
+                const data = snapshot.val() || { current: 0, total: 50 };
+                let current = data.current || 0;
+                let total = data.total || 50;
+                if (current > total) current = total;
+                if (current < 0) current = 0;
+                if (total < 1) total = 1;
+
+                document.getElementById(`num${id}`).innerText = current;
+                document.getElementById(`inc${id}`).classList.toggle('disabled', current >= total);
+                document.getElementById(`dec${id}`).classList.toggle('disabled', current <= 0);
+            });
+
+            // Initial set if no data
+            onValue(itemRef, (snapshot) => {
+                if (!snapshot.exists()) {
+                    const initials = {1: {current:15, total:50}, 2: {current:30, total:50}, 3: {current:40, total:50}};
+                    set(itemRef, initials[id]);
+                }
+            }, { onlyOnce: true });
+        });
+
+        // Update functions with transactions
+        window.increment = function(id) {
+            if (document.getElementById(`inc${id}`).classList.contains('disabled')) return;
+            const itemRef = ref(db, paths[id]);
+            runTransaction(itemRef, (data) => {
+                if (!data) {
+                    data = { current: 0, total: 50 };
+                }
+                let current = data.current || 0;
+                let total = data.total || 50;
+                if (current < total) {
+                    data.current = current + 1;
+                }
+                return data;
+            });
+        };
+
+        window.decrement = function(id) {
+            if (document.getElementById(`dec${id}`).classList.contains('disabled')) return;
+            const itemRef = ref(db, paths[id]);
+            runTransaction(itemRef, (data) => {
+                if (!data) {
+                    data = { current: 0, total: 50 };
+                }
+                let current = data.current || 0;
+                if (current > 0) {
+                    data.current = current - 1;
+                }
+                return data;
+            });
+        };
+    </script>
+</body>
+</html>

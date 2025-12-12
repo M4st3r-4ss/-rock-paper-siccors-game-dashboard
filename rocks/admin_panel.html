@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 20px;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .icon {
+            background-color: white;
+            border-radius: 10px;
+            padding: 10px;
+            margin-right: 10px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid black;
+        }
+        .icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .text {
+            margin-right: 10px;
+            width: 60px;
+        }
+        .bar-container {
+            width: 300px;
+            height: 20px;
+            border: 1px solid white;
+            background-color: black;
+            position: relative;
+        }
+        .bar {
+            height: 100%;
+        }
+        .editor {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .button {
+            background-color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: black;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .reset-button {
+            background-color: white;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin-left: 10px;
+            color: black;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .reset-button.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .number {
+            color: white;
+            font-size: 18px;
+            min-width: 40px;
+            text-align: center;
+        }
+        .label-row {
+            display: flex;
+            width: 100%;
+            margin-bottom: 10px;
+            margin-top: 40px;
+        }
+        .empty {
+            width: 60px;
+        }
+        .label {
+            width: 80px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .summary-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .number-input {
+            background-color: white;
+            color: black;
+            border-radius: 5px;
+            padding: 5px;
+            width: 50px;
+            text-align: center;
+            font-size: 16px;
+            border: none;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="row" id="row1">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/paper.png" alt="paper"></div>
+        <div class="text" id="text1">15/50</div>
+        <div class="bar-container">
+            <div class="bar" id="bar1" style="width: 30%; background-color: red;"></div>
+        </div>
+    </div>
+    <div class="row" id="row2">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/scissors.png" alt="scissors"></div>
+        <div class="text" id="text2">30/50</div>
+        <div class="bar-container">
+            <div class="bar" id="bar2" style="width: 60%; background-color: yellow;"></div>
+        </div>
+    </div>
+    <div class="row" id="row3">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/rock.png" alt="rock"></div>
+        <div class="text" id="text3">40/50</div>
+        <div class="bar-container">
+            <div class="bar" id="bar3" style="width: 80%; background-color: blue;"></div>
+        </div>
+    </div>
+
+    <div class="editor">
+        <div class="button" id="dec1" onclick="decrement(1)">−</div>
+        <div class="number" id="num1">15</div>
+        <div class="button" id="inc1" onclick="increment(1)">+</div>
+        <button class="reset-button" id="reset1" onclick="resetFull(1)">Reset</button>
+    </div>
+    <div class="editor">
+        <div class="button" id="dec2" onclick="decrement(2)">−</div>
+        <div class="number" id="num2">30</div>
+        <div class="button" id="inc2" onclick="increment(2)">+</div>
+        <button class="reset-button" id="reset2" onclick="resetFull(2)">Reset</button>
+    </div>
+    <div class="editor">
+        <div class="button" id="dec3" onclick="decrement(3)">−</div>
+        <div class="number" id="num3">40</div>
+        <div class="button" id="inc3" onclick="increment(3)">+</div>
+        <button class="reset-button" id="reset3" onclick="resetFull(3)">Reset</button>
+    </div>
+
+    <div class="label-row">
+        <div class="empty"></div>
+        <div class="label">current</div>
+        <div class="label">total</div>
+    </div>
+    <div class="summary-row">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/paper.png" alt="paper"></div>
+        <input type="number" class="number-input" id="current1" value="15">
+        <input type="number" class="number-input" id="total1" value="50">
+    </div>
+    <div class="summary-row">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/scissors.png" alt="scissors"></div>
+        <input type="number" class="number-input" id="current2" value="30">
+        <input type="number" class="number-input" id="total2" value="50">
+    </div>
+    <div class="summary-row">
+        <div class="icon"><img src="https://raw.githubusercontent.com/M4st3r-4ss/-rock-paper-siccors-game-dashboard/main/rock.png" alt="rock"></div>
+        <input type="number" class="number-input" id="current3" value="40">
+        <input type="number" class="number-input" id="total3" value="50">
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
+
+        const firebaseConfig = {
+
+  apiKey: "AIzaSyBYKmd778iJDb1zei7BO3UzSif-6If_8PY",
+
+  authDomain: "public-4ad5c.firebaseapp.com",
+
+  projectId: "public-4ad5c",
+
+  storageBucket: "public-4ad5c.firebasestorage.app",
+
+  messagingSenderId: "1048350758255",
+
+  appId: "1:1048350758255:web:93a550c9a770b82486049a",
+
+  measurementId: "G-YPM6XCVKWD"
+
+};
+
+
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const paths = {
+            1: 'items/open-hand',
+            2: 'items/peace',
+            3: 'items/fist'
+        };
+
+        // Listen for real-time changes for each item
+        Object.keys(paths).forEach(id => {
+            const itemRef = ref(db, paths[id]);
+            onValue(itemRef, (snapshot) => {
+                const data = snapshot.val() || { current: 0, total: 50 };
+                let current = data.current || 0;
+                let total = data.total || 50;
+                if (total < 1) total = 1;
+                if (current > total) current = total;
+                if (current < 0) current = 0;
+
+                document.getElementById(`num${id}`).innerText = current;
+                document.getElementById(`text${id}`).innerText = `${current}/${total}`;
+                document.getElementById(`bar${id}`).style.width = `${(current / total) * 100}%`;
+                document.getElementById(`current${id}`).value = current;
+                document.getElementById(`total${id}`).value = total;
+
+                document.getElementById(`inc${id}`).classList.toggle('disabled', current >= total);
+                document.getElementById(`dec${id}`).classList.toggle('disabled', current <= 0);
+                document.getElementById(`reset${id}`).classList.toggle('disabled', current >= total);
+            });
+
+            // Initial set if no data
+            onValue(itemRef, (snapshot) => {
+                if (!snapshot.exists()) {
+                    const initials = {1: {current:15, total:50}, 2: {current:30, total:50}, 3: {current:40, total:50}};
+                    set(itemRef, initials[id]);
+                }
+            }, { onlyOnce: true });
+        });
+
+        // Update functions with transactions
+        window.increment = function(id) {
+            if (document.getElementById(`inc${id}`).classList.contains('disabled')) return;
+            const itemRef = ref(db, paths[id]);
+            runTransaction(itemRef, (data) => {
+                if (!data) {
+                    data = { current: 0, total: 50 };
+                }
+                let current = data.current || 0;
+                let total = data.total || 50;
+                if (current < total) {
+                    data.current = current + 1;
+                }
+                return data;
+            });
+        };
+
+        window.decrement = function(id) {
+            if (document.getElementById(`dec${id}`).classList.contains('disabled')) return;
+            const itemRef = ref(db, paths[id]);
+            runTransaction(itemRef, (data) => {
+                if (!data) {
+                    data = { current: 0, total: 50 };
+                }
+                let current = data.current || 0;
+                if (current > 0) {
+                    data.current = current - 1;
+                }
+                return data;
+            });
+        };
+
+        window.resetFull = function(id) {
+            if (document.getElementById(`reset${id}`).classList.contains('disabled')) return;
+            const itemRef = ref(db, paths[id]);
+            runTransaction(itemRef, (data) => {
+                if (!data) {
+                    data = { current: 0, total: 50 };
+                }
+                let total = data.total || 50;
+                data.current = total;
+                return data;
+            });
+        };
+
+        // Input listeners with transactions to maintain consistency
+        [1, 2, 3].forEach(id => {
+            document.getElementById(`current${id}`).addEventListener('input', () => {
+                const val = parseInt(document.getElementById(`current${id}`).value);
+                if (isNaN(val)) return;
+                const itemRef = ref(db, paths[id]);
+                runTransaction(itemRef, (data) => {
+                    if (!data) {
+                        data = { current: 0, total: 50 };
+                    }
+                    let total = data.total || 50;
+                    let newCurrent = val;
+                    if (newCurrent > total) newCurrent = total;
+                    if (newCurrent < 0) newCurrent = 0;
+                    data.current = newCurrent;
+                    return data;
+                });
+            });
+            document.getElementById(`total${id}`).addEventListener('input', () => {
+                const val = parseInt(document.getElementById(`total${id}`).value);
+                if (isNaN(val)) return;
+                const itemRef = ref(db, paths[id]);
+                runTransaction(itemRef, (data) => {
+                    if (!data) {
+                        data = { current: 0, total: 50 };
+                    }
+                    let current = data.current || 0;
+                    let newTotal = val;
+                    if (newTotal < 1) newTotal = 1;
+                    if (current > newTotal) data.current = newTotal;
+                    data.total = newTotal;
+                    return data;
+                });
+            });
+        });
+    </script>
+</body>
+</html>
